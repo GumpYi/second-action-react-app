@@ -1,8 +1,10 @@
-name: Deploy Project
-on: [push]
-# This workflow deploys the project when code is pushed or manually triggered.
+name: Events Demo 1
+on:
+  pull_request:
+    types: [opened, edited]
+  workflow_dispatch:
 jobs:
-  ci:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
