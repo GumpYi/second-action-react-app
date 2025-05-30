@@ -12,19 +12,8 @@ on:
       - develop
     paths-ignore:
       - "README.md"
-      - "CHANGELOG.md"
       - "docs/**"
-      - "tests/**"
-      - "examples/**"
-      - ".gitignore"
-      - ".eslintrc.js"
-      - ".prettierrc.js"
-      - ".babelrc.js"
-      - ".npmrc"
-      - ".vscode/**"
-      - ".github/ISSUE_TEMPLATE/**"
-      - ".github/PULL_REQUEST_TEMPLATE/**"
-      - ".github/workflows/*"
+      - "CHANGELOG.md"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -44,7 +33,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-artifacts
           path: |
