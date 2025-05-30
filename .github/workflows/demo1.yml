@@ -93,3 +93,12 @@ jobs:
           echo "Script file: ${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deploying the project..."
+  report:
+    needs: [lint, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "Something went wrong"
+          echo "${{ github }}"
