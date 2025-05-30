@@ -2,6 +2,9 @@ name: Events Demo 1
 on:
   pull_request:
     types: [opened, edited, synchronize]
+    branches:
+      - main
+      - develop
   workflow_dispatch:
   push:
     branches:
@@ -40,3 +43,10 @@ jobs:
         run: npm test
       - name: Build project
         run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-artifacts
+          path: |
+            dist
+            package.json
