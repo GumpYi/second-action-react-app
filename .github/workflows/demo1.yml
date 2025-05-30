@@ -15,7 +15,7 @@ on:
       - "docs/**"
       - "CHANGELOG.md"
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -38,4 +38,15 @@ jobs:
           name: dist-artifacts
           path: |
             dist
-            package.json
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifacts
+      - name: Output contents
+        run: |
+          echo "Contents of dist:"
+          ls -la dist
