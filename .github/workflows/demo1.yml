@@ -15,23 +15,37 @@ on:
       - "docs/**"
       - "CHANGELOG.md"
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Install NodeJS
-        uses: actions/setup-node@v3
+      - name: Cache dependencies
+        uses: actions/cache@v4
         with:
-          node-version: 18
+          path: ~/.npm
+          key: deps-node-modules-${{hashFiles('**/package-lock.json')}}
       - name: Install dependencies
         run: npm ci
       - name: Run ESLint
         run: npm run lint
       - name: Run tests
         run: npm test
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{hashFiles('**/package-lock.json')}}
+      - name: Install dependencies
+        run: npm ci
       - name: Build project
         run: npm run build
       - name: Publish JS filename
@@ -43,8 +57,8 @@ jobs:
           name: dist-artifacts
           path: |
             dist
-  cd:
-    needs: ci
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -57,6 +71,6 @@ jobs:
           ls
       - name: Ouput filename
         run: |
-          echo "Script file: ${{ needs.ci.outputs.script-file }}"
+          echo "Script file: ${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deploying the project..."
