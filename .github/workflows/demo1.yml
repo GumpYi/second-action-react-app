@@ -1,4 +1,4 @@
-name: Events Demo 1
+name: Using resuseable workflows
 on:
   pull_request:
     types: [opened, edited, synchronize]
@@ -84,21 +84,22 @@ jobs:
             dist
   deploy:
     needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-artifacts
-      - name: Output contents
-        run: |
-          echo "Contents of dist:"
-          ls
-      - name: Ouput filename
-        run: |
-          echo "Script file: ${{ needs.build.outputs.script-file }}"
-      - name: Deploy
-        run: echo "Deploying the project..."
+    uses: ./.github/workflows/reuseable.yml
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - name: Download artifacts
+    #     uses: actions/download-artifact@v4
+    #     with:
+    #       name: dist-artifacts
+    #   - name: Output contents
+    #     run: |
+    #       echo "Contents of dist:"
+    #       ls
+    #   - name: Ouput filename
+    #     run: |
+    #       echo "Script file: ${{ needs.build.outputs.script-file }}"
+    #   - name: Deploy
+    #     run: echo "Deploying the project..."
   report:
     needs: [lint, deploy]
     if: failure()
