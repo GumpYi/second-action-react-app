@@ -18,7 +18,7 @@ on:
         value: ${{ jobs.deploy.outputs.outcome }}
 jobs:
   deploy:
-    environment: ${{ inputs.environment }}
+    environment: Dev
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
