@@ -35,7 +35,7 @@ jobs:
         id: cached-deps
         uses: ./.github/actions/cached-deps
         with:
-          caching: "false"
+          caching: "true"
       - name: Output information
         run: echo "${{ steps.cached-deps.outputs.used-cache }}"
       - name: Run tests
@@ -93,3 +93,8 @@ jobs:
         run: |
           echo "Something went wrong"
           echo "${{ github }}"
+  information:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run custom action
+        uses: ./.github/actions/deploy-s3-javascript
