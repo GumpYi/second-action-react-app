@@ -37,7 +37,7 @@ jobs:
         with:
           caching: "false"
       - name: Output information
-        run: echo "Cache used? ${{ steps.cached-deps.outputs.used-cache }}"
+        run: echo "${{ steps.cached-deps.outputs.used-cache }}"
       - name: Run tests
         # continue-on-error: true
         id: run-tests
