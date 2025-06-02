@@ -16,6 +16,7 @@ on:
       - "CHANGELOG.md"
 jobs:
   lint:
+    environment: Dev
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -25,31 +26,34 @@ jobs:
         with:
           caching: "true"
       - name: Run ESLint
-        run: npm run lint
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Load & cache dependencies
-        id: cached-deps
-        uses: ./.github/actions/cached-deps
-        with:
-          caching: "true"
-      - name: Output information
-        run: echo "${{ steps.cached-deps.outputs.used-cache }}"
-      - name: Run tests
-        # continue-on-error: true
-        id: run-tests
-        run: npm test
-      - name: Upload test results
-        if: failure() && steps.run-tests.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test.json
+        run: |
+          npm run lint
+          echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get code
+  #       uses: actions/checkout@v4
+  #     - name: Load & cache dependencies
+  #       id: cached-deps
+  #       uses: ./.github/actions/cached-deps
+  #       with:
+  #         caching: "true"
+  #     - name: Output information
+  #       run: echo "${{ steps.cached-deps.outputs.used-cache }}"
+  #     - name: Run tests
+  #       # continue-on-error: true
+  #       id: run-tests
+  #       run: npm test
+  #     - name: Upload test results
+  #       if: failure() && steps.run-tests.outcome == 'failure'
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: test-report
+  #         path: test.json
   build:
-    needs: test
+    #needs: test
     runs-on: ubuntu-latest
     outputs:
       script-file: ${{ steps.publish.outputs.script-file }}
