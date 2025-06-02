@@ -7,18 +7,19 @@ on:
         required: true
         default: dist
         type: string
-      environment:
-        description: "Deployment environment"
-        required: true
-        default: Dev
-        type: string
     outputs:
       result:
         description: "Result of the deployment"
         value: ${{ jobs.deploy.outputs.outcome }}
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: "AWS Access Key ID"
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: "AWS Secret Access Key"
+        required: true
 jobs:
   deploy:
-    environment: Dev
     outputs:
       outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
