@@ -35,7 +35,7 @@ jobs:
         id: cached-deps
         uses: ./.github/actions/cached-deps
         with:
-          caching: "true"
+          caching: "false"
       - name: Output information
         run: echo "Cache used? ${{ steps.cached-deps.outputs.used-cache }}"
       - name: Run tests
@@ -59,7 +59,7 @@ jobs:
       - name: Load & cache dependencies
         uses: ./.github/actions/cached-deps
         with:
-          caching: "false"
+          caching: "true"
       - name: Build project
         run: npm run build
       - name: Publish JS filename
