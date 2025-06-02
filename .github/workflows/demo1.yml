@@ -76,8 +76,7 @@ jobs:
     uses: ./.github/workflows/reuseable.yml
     with:
       artifact-name: dist-artifacts
-    # secrets:
-    #   some-secret: "123"
+      environment: Dev
   print-deploy-result:
     needs: deploy
     runs-on: ubuntu-latest
@@ -93,10 +92,3 @@ jobs:
         run: |
           echo "Something went wrong"
           echo "${{ github }}"
-  information:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Run custom action
-        uses: ./.github/actions/deploy-s3-javascript
