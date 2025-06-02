@@ -16,7 +16,6 @@ on:
       - "CHANGELOG.md"
 jobs:
   lint:
-    environment: Dev
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -28,8 +27,6 @@ jobs:
       - name: Run ESLint
         run: |
           npm run lint
-          echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
   # test:
   #   runs-on: ubuntu-latest
   #   steps:

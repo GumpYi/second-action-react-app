@@ -34,6 +34,8 @@ jobs:
         run: |
           echo "Contents of dist:"
           ls
+          echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       - name: Deploy site
         uses: ./.github/actions/deploy-s3-javascript
         env:
