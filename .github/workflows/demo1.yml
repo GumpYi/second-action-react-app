@@ -77,13 +77,13 @@ jobs:
     uses: ./.github/workflows/reuseable.yml
     with:
       artifact-name: dist-artifacts
-    secrets: inherit
+      envir: Dev
   print-deploy-result:
     needs: deploy-dev
     runs-on: ubuntu-latest
     steps:
       - name: Output deployment result
-        run: echo "${{ needs.deploy-dev.outputs.result }}"
+        run: echo "${{ needs.deploy-dev.outputs.website-url }}"
   report:
     needs: [lint, deploy-dev]
     if: failure()

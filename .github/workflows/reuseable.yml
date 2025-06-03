@@ -7,15 +7,20 @@ on:
         required: true
         default: dist
         type: string
+      envir:
+        description: "Environment to deploy to"
+        required: true
+        default: Dev
+        type: string
     outputs:
-      result:
-        description: "Result of the deployment"
-        value: ${{ jobs.deploy.outputs.outcome }}
+      website-url:
+        description: "URL of the deployed static website."
+        value: ${{ jobs.deploy.outputs.website-url }}
 jobs:
   deploy:
-    environment: Dev
+    environment: ${{ inputs.envir }}
     outputs:
-      outcome: ${{ steps.set-result.outputs.step-result }}
+      website-url: ${{ steps.set-result.outputs.website-url }}
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -28,10 +33,9 @@ jobs:
       - name: Output contents
         run: |
           echo "Contents of dist:"
-          ls
-          echo "${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          ls -R ./dist
       - name: Deploy site
+        id: deploy-site
         uses: ./.github/actions/deploy-s3-javascript
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -39,6 +43,7 @@ jobs:
         with:
           bucket: gyi-custom-action-hosting
           dist-folder: ./dist
-      - name: Set result ouput
+      - name: Output information
         id: set-result
-        run: echo "step-result=success" >> $GITHUB_OUTPUT
+        run: |
+          echo "website-url=${{ steps.deploy-site.outputs.website-url }}" >> $GITHUB_OUTPUT
