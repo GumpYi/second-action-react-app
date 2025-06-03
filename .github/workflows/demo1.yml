@@ -1,23 +1,95 @@
-name: Events Demo 1
+name: Using resuseable workflows
 on:
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, synchronize]
+    branches:
+      - main
+      - develop
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "CHANGELOG.md"
 jobs:
-  deploy:
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get code
+  #       uses: actions/checkout@v4
+  #     - name: Load & cache dependencies
+  #       uses: ./.github/actions/cached-deps
+  #       with:
+  #         caching: "true"
+  #     - name: Run ESLint
+  #       run: |
+  #         npm run lint
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get code
+  #       uses: actions/checkout@v4
+  #     - name: Load & cache dependencies
+  #       id: cached-deps
+  #       uses: ./.github/actions/cached-deps
+  #       with:
+  #         caching: "true"
+  #     - name: Output information
+  #       run: echo "${{ steps.cached-deps.outputs.used-cache }}"
+  #     - name: Run tests
+  #       # continue-on-error: true
+  #       id: run-tests
+  #       run: npm test
+  #     - name: Upload test results
+  #       if: failure() && steps.run-tests.outcome == 'failure'
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: test-report
+  #         path: test.json
+  build:
+    #needs: test
     runs-on: ubuntu-latest
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Get code
-        uses: actions/checkout@v3
-      - name: Install NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Load & cache dependencies
+        uses: ./.github/actions/cached-deps
         with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm ci
-      - name: Run ESLint
-        run: npm run lint
-      - name: Run tests
-        run: npm test
+          caching: "true"
       - name: Build project
         run: npm run build
+      - name: Publish JS filename
+        id: publish
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifacts
+          path: |
+            dist
+  deploy-dev:
+    needs: build
+    uses: ./.github/workflows/reuseable.yml
+    with:
+      artifact-name: dist-artifacts
+    secrets: inherit
+  print-deploy-result:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output deployment result
+        run: echo "${{ needs.deploy-dev.outputs.website-url }}"
+  # report:
+  #   needs: [lint, deploy-dev]
+  #   if: failure()
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Output information
+  #       run: |
+  #         echo "Something went wrong"
+  #         echo "${{ github }}"

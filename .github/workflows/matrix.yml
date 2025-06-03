@@ -1,0 +1,43 @@
+name: Matrix Demo
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "CHANGELOG.md"
+jobs:
+  build:
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [12, 14, 16]
+        include:
+          - os: ubuntu-latest
+            node-version: 18
+          - os: windows-latest
+            node-version: 18
+        exclude:
+          - os: windows-latest
+            node-version: 12
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: deps-node-modules-${{hashFiles('**/package-lock.json')}}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint

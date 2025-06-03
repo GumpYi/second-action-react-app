@@ -1,0 +1,52 @@
+name: Reuseable Deploy
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: "Name of the artifact to download"
+        required: true
+        default: dist
+        type: string
+    outputs:
+      website-url:
+        description: "URL of the deployed static website."
+        value: ${{ jobs.deploy.outputs.website-url }}
+jobs:
+  deploy:
+    outputs:
+      website-url: ${{ steps.set-result.outputs.website-url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ./dist
+      - name: Output contents
+        run: |
+          echo "Contents of dist:"
+          ls -R ./dist
+      # - name: Deploy site
+      #   id: deploy-site
+      #   uses: ./.github/actions/deploy-s3-javascript
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   with:
+      #     bucket: gyi-custom-action-hosting
+      #     dist-folder: ./dist
+      - name: Deploy site
+        id: deploy-site
+        uses: ./.github/actions/deploy-s3-docker
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        with:
+          bucket: gyi-custom-action-hosting
+          dist-folder: ./dist
+      - name: Output information
+        id: set-result
+        run: |
+          echo "website-url=${{ steps.deploy-site.outputs.website-url }}" >> $GITHUB_OUTPUT
