@@ -85,6 +85,14 @@ jobs:
         run: |
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_OUTPUT
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_OUTPUT
+  print-env:
+    needs: output-env
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output environment variables
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ needs.output-env.outputs.AWS_ACCESS_KEY_ID }}"
+          echo "AWS_SECRET_ACCESS_KEY=${{ needs.output-env.outputs.AWS_SECRET_ACCESS_KEY }}"
   deploy-dev:
     needs: output-env
     uses: ./.github/workflows/reuseable.yml
