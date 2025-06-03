@@ -19,7 +19,7 @@ def run():
 
     website_url = f"http://{bucket}.s3-website-{bucket_region}.amazonaws.com"
     Path(os.environ["GITHUB_OUTPUT"]).write_text(
-        f"website-url={website_url}", append=True
+        f"website-url={website_url}", newline="\n"
     )
 
 
