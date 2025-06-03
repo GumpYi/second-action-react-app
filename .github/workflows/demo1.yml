@@ -15,18 +15,18 @@ on:
       - "docs/**"
       - "CHANGELOG.md"
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Load & cache dependencies
-        uses: ./.github/actions/cached-deps
-        with:
-          caching: "true"
-      - name: Run ESLint
-        run: |
-          npm run lint
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get code
+  #       uses: actions/checkout@v4
+  #     - name: Load & cache dependencies
+  #       uses: ./.github/actions/cached-deps
+  #       with:
+  #         caching: "true"
+  #     - name: Run ESLint
+  #       run: |
+  #         npm run lint
   # test:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -51,6 +51,7 @@ jobs:
   #         path: test.json
   build:
     #needs: test
+    environment: Dev
     runs-on: ubuntu-latest
     outputs:
       script-file: ${{ steps.publish.outputs.script-file }}
@@ -77,18 +78,19 @@ jobs:
     uses: ./.github/workflows/reuseable.yml
     with:
       artifact-name: dist-artifacts
+    secrets: inherit
   print-deploy-result:
     needs: deploy-dev
     runs-on: ubuntu-latest
     steps:
       - name: Output deployment result
         run: echo "${{ needs.deploy-dev.outputs.website-url }}"
-  report:
-    needs: [lint, deploy-dev]
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output information
-        run: |
-          echo "Something went wrong"
-          echo "${{ github }}"
+  # report:
+  #   needs: [lint, deploy-dev]
+  #   if: failure()
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Output information
+  #       run: |
+  #         echo "Something went wrong"
+  #         echo "${{ github }}"

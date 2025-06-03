@@ -7,18 +7,12 @@ on:
         required: true
         default: dist
         type: string
-      ENVIRONMENT_STAGE:
-        description: "Environment to deploy to"
-        required: false
-        default: Dev
-        type: string
     outputs:
       website-url:
         description: "URL of the deployed static website."
         value: ${{ jobs.deploy.outputs.website-url }}
 jobs:
   deploy:
-    environment: ${{ vars.ENVIRONMENT_STAGE }}
     outputs:
       website-url: ${{ steps.set-result.outputs.website-url }}
     runs-on: ubuntu-latest
@@ -34,7 +28,6 @@ jobs:
         run: |
           echo "Contents of dist:"
           ls -R ./dist
-          echo "${{ inputs.envir }} environment deployment"
       - name: Deploy site
         id: deploy-site
         uses: ./.github/actions/deploy-s3-javascript
