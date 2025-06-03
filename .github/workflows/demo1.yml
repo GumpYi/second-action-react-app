@@ -77,7 +77,6 @@ jobs:
     uses: ./.github/workflows/reuseable.yml
     with:
       artifact-name: dist-artifacts
-      envir: "Dev"
   print-deploy-result:
     needs: deploy-dev
     runs-on: ubuntu-latest

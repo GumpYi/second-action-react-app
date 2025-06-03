@@ -9,7 +9,7 @@ on:
         type: string
       envir:
         description: "Environment to deploy to"
-        required: true
+        required: false
         default: Dev
         type: string
     outputs:
