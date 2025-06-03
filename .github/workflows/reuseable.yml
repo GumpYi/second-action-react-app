@@ -34,6 +34,7 @@ jobs:
         run: |
           echo "Contents of dist:"
           ls -R ./dist
+          echo "${{ inputs.envir }} environment deployment"
       - name: Deploy site
         id: deploy-site
         uses: ./.github/actions/deploy-s3-javascript
