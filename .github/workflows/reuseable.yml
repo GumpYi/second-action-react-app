@@ -7,7 +7,7 @@ on:
         required: true
         default: dist
         type: string
-      envir:
+      ENVIRONMENT_STAGE:
         description: "Environment to deploy to"
         required: false
         default: Dev
@@ -18,7 +18,7 @@ on:
         value: ${{ jobs.deploy.outputs.website-url }}
 jobs:
   deploy:
-    environment: ${{ inputs.envir }}
+    environment: ${{ vars.ENVIRONMENT_STAGE }}
     outputs:
       website-url: ${{ steps.set-result.outputs.website-url }}
     runs-on: ubuntu-latest
