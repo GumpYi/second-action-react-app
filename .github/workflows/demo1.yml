@@ -51,7 +51,6 @@ jobs:
   #         path: test.json
   build:
     #needs: test
-    environment: ${{ vars.ENVIRONMENT_STAGE }}
     runs-on: ubuntu-latest
     outputs:
       script-file: ${{ steps.publish.outputs.script-file }}

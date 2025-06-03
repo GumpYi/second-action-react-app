@@ -28,9 +28,18 @@ jobs:
         run: |
           echo "Contents of dist:"
           ls -R ./dist
+      # - name: Deploy site
+      #   id: deploy-site
+      #   uses: ./.github/actions/deploy-s3-javascript
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   with:
+      #     bucket: gyi-custom-action-hosting
+      #     dist-folder: ./dist
       - name: Deploy site
         id: deploy-site
-        uses: ./.github/actions/deploy-s3-javascript
+        uses: ./.github/actions/deploy-s3-docker
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
